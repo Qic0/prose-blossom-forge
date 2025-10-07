@@ -85,13 +85,13 @@ const TaskCompletionDialog: React.FC<TaskCompletionDialogProps> = ({
         throw new Error('Failed to upload photo');
       }
 
-      // Update task
+      // Update task - send to dispatcher review
       const { error } = await supabase
         .from('zadachi')
         .update({
-          status: 'completed',
-          completed_at: new Date().toISOString(),
-          checklist_photo: photoUrl
+          status: 'under_review',
+          checklist_photo: photoUrl,
+          is_locked: true
         })
         .eq('uuid_zadachi', task.uuid_zadachi);
 
@@ -99,59 +99,8 @@ const TaskCompletionDialog: React.FC<TaskCompletionDialogProps> = ({
         throw error;
       }
 
-      // Update responsible user's salary if task has salary and responsible user
-      if (task.responsible_user_id && task.salary && task.salary > 0) {
-        // Проверяем, просрочена ли задача
-        const isOverdue = task.due_date && new Date(task.due_date) < new Date();
-        const hasPenalty = isOverdue;
-        const actualPayment = hasPenalty ? Math.round(task.salary * 0.9) : task.salary;
-        
-        // Get current user salary and completed tasks
-        const { data: userData, error: userFetchError } = await supabase
-          .from('users')
-          .select('salary, completed_tasks')
-          .eq('uuid_user', task.responsible_user_id)
-          .single();
-
-        if (userFetchError) {
-          console.error('Error fetching user salary:', userFetchError);
-        } else {
-          const currentSalary = userData?.salary || 0;
-          const newSalary = currentSalary + actualPayment;
-
-          // Get current completed tasks array
-          const currentCompletedTasks = (userData as any)?.completed_tasks || [];
-          
-          // Проверяем, не была ли задача уже добавлена
-          const taskAlreadyExists = currentCompletedTasks.some((t: any) => t.task_id === task.id_zadachi);
-          
-          if (!taskAlreadyExists) {
-            const newCompletedTask = {
-              task_id: task.id_zadachi,
-              payment: actualPayment,
-              has_penalty: hasPenalty
-            };
-            const updatedCompletedTasks = [...currentCompletedTasks, newCompletedTask];
-
-            // Update user salary and completed tasks
-            const { error: salaryUpdateError } = await supabase
-              .from('users')
-              .update({ 
-                salary: newSalary,
-                completed_tasks: updatedCompletedTasks
-              } as any)
-              .eq('uuid_user', task.responsible_user_id);
-
-            if (salaryUpdateError) {
-              console.error('Error updating user salary:', salaryUpdateError);
-            }
-          } else {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Task already exists in completed_tasks, skipping addition');
-            }
-          }
-        }
-      }
+      // Зарплата будет начислена после подтверждения диспетчером
+      // Задача отправляется на проверку со статусом 'completed'
 
       onComplete();
     } catch (error) {
