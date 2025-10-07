@@ -475,7 +475,6 @@ export type Database = {
         | "packer"
         | "otk"
         | "dispatcher"
-        | "Диспетчер"
       user_status: "online" | "offline"
     }
     CompositeTypes: {
@@ -624,7 +623,6 @@ export const Constants = {
         "packer",
         "otk",
         "dispatcher",
-        "Диспетчер",
       ],
       user_status: ["online", "offline"],
     },
