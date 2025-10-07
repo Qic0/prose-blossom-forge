@@ -630,7 +630,7 @@ const TaskDetailsDialog = ({
         </div>
 
         {/* Действия */}
-        <div className="flex justify-between items-center pt-6 border-t">
+        <div className="sticky bottom-0 flex justify-between items-center pt-6 border-t bg-background z-10 -mx-6 px-6 pb-6 -mb-6">
           <div className="flex gap-2">
             <Button 
               variant="destructive" 
