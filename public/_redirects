@@ -1,0 +1,13 @@
+# Netlify redirects for SPA
+/*    /index.html   200
+
+# Handle auth redirects
+/auth    /index.html   200
+/worker  /index.html   200
+/dashboard  /index.html   200
+/profile    /index.html   200
+/workers    /index.html   200
+/zakazi     /index.html   200
+/zadachi    /index.html   200
+/analitika  /index.html   200
+/automation-settings  /index.html   200

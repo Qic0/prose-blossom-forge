@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": false
+  },
+  "nodeModulesDir": "auto",
+  "imports": {
+    "resend": "npm:resend@2.0.0"
+  }
+}
